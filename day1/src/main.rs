@@ -1,9 +1,41 @@
-fn parse_input1(str: &str) -> (Vec<i64>, Vec<i64>) {
+use aoc_traits::AdventOfCodeDay;
+
+pub struct Day1Solver;
+
+impl<'a> AdventOfCodeDay<'a> for Day1Solver {
+    type ParsedInput = (Vec<usize>, Vec<usize>);
+
+    type Part1Output = i64;
+
+    type Part2Output = usize;
+
+    fn solve_part1(_input: &Self::ParsedInput) -> Self::Part1Output {
+        todo!()
+    }
+
+    fn solve_part2(_input: &Self::ParsedInput) -> Self::Part2Output {
+        todo!()
+    }
+
+    fn parse_input(input: &'a str) -> Self::ParsedInput {
+        input
+            .lines()
+            .map(|line| {
+                let mut chars = line.split_whitespace();
+                let left = chars.next().unwrap().parse::<usize>().unwrap();
+                let right = chars.next_back().unwrap().parse::<usize>().unwrap();
+                (left, right)
+            })
+            .collect()
+    }
+}
+
+fn parse_input1(str: &str) -> (Vec<usize>, Vec<usize>) {
     str.lines()
         .map(|line| {
             let mut chars = line.split_whitespace();
-            let left = chars.next().unwrap().parse::<i64>().unwrap();
-            let right = chars.next_back().unwrap().parse::<i64>().unwrap();
+            let left = chars.next().unwrap().parse::<usize>().unwrap();
+            let right = chars.next_back().unwrap().parse::<usize>().unwrap();
             (left, right)
         })
         .collect()
@@ -28,7 +60,7 @@ fn solve_puzzle1(input: &str) -> i64 {
     rhs.sort();
     lhs.into_iter()
         .zip(rhs)
-        .map(|(lhs, rhs)| (lhs - rhs).abs())
+        .map(|(lhs, rhs)| (lhs as i64 - rhs as i64).abs())
         .sum()
 }
 
