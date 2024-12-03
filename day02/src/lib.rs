@@ -1,5 +1,27 @@
-use std::{cmp::Ordering, result};
+use std::cmp::Ordering;
 
+use aoc_traits::AdventOfCodeDay;
+
+type Input = Vec<Vec<i64>>;
+#[derive(Default)]
+pub struct Solver;
+impl AdventOfCodeDay for Solver {
+    type ParsedInput<'a> = Input;
+    type Part1Output = usize;
+    type Part2Output = usize;
+
+    fn solve_part1(input: &Self::ParsedInput<'_>) -> Self::Part1Output {
+        solve_puzzle1(input)
+    }
+
+    fn solve_part2(input: &Self::ParsedInput<'_>) -> Self::Part2Output {
+        solve_puzzle2(input)
+    }
+
+    fn parse_input<'a>(input: &'a str) -> Self::ParsedInput<'a> {
+        parse_demo1(input)
+    }
+}
 fn parse_demo1(input: &str) -> Vec<Vec<i64>> {
     input
         .lines()
@@ -32,8 +54,7 @@ fn is_safe(report: &[i64]) -> bool {
     true
 }
 
-fn solve_puzzle1(input: &str) -> usize {
-    let reports = parse_demo1(input);
+fn solve_puzzle1(reports: &Input) -> usize {
     let mut safe_reports = 0;
     for report in reports.iter() {
         if is_safe(report) {
@@ -43,8 +64,7 @@ fn solve_puzzle1(input: &str) -> usize {
     safe_reports
 }
 
-fn solve_puzzle2(input: &str) -> usize {
-    let reports = parse_demo1(input);
+fn solve_puzzle2(reports: &Input) -> usize {
     let mut safe_reports = 0;
     for report in reports.iter() {
         if is_safe(report) {
@@ -63,30 +83,11 @@ fn solve_puzzle2(input: &str) -> usize {
     safe_reports
 }
 
-fn main() {
+#[test]
+fn day02() {
     let root = std::env!("CARGO_MANIFEST_DIR");
     let input = std::fs::read_to_string(format!("{root}/inputs/puzzle1.txt")).unwrap();
-    let result = solve_puzzle2(input.trim());
-    println!("{result}")
-}
-
-#[test]
-fn demo1() {
-    let root = std::env!("CARGO_MANIFEST_DIR");
-    let input = std::fs::read_to_string(format!("{root}/inputs/demo1.txt")).unwrap();
-    assert_eq!(2, solve_puzzle1(input.trim()));
-}
-
-#[test]
-fn demo2() {
-    let root = std::env!("CARGO_MANIFEST_DIR");
-    let input = std::fs::read_to_string(format!("{root}/inputs/demo1.txt")).unwrap();
-    assert_eq!(4, solve_puzzle2(input.trim()));
-}
-
-#[test]
-fn puzzle1() {
-    let root = std::env!("CARGO_MANIFEST_DIR");
-    let input = std::fs::read_to_string(format!("{root}/inputs/puzzle1.txt")).unwrap();
-    assert_eq!(559, solve_puzzle1(input.trim()));
+    let parsed = Solver::parse_input(input.trim());
+    assert_eq!(559, Solver::solve_part1(&parsed));
+    assert_eq!(601, Solver::solve_part2(&parsed));
 }
