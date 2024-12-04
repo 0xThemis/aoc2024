@@ -3,7 +3,7 @@ use aoc_traits::AdventOfCodeDay;
 #[derive(Default)]
 pub struct Solver;
 impl AdventOfCodeDay for Solver {
-    type ParsedInput<'a> = Vec<Vec<u32>>;
+    type ParsedInput<'a> = Vec<Vec<u8>>;
     type Part1Output = u32;
     type Part2Output = u32;
 
@@ -13,7 +13,7 @@ impl AdventOfCodeDay for Solver {
         let mut result = 0;
         for x in 3..column_width {
             for y in 3..row_width {
-                if input[x][y] == 1 {
+                if input[x][y] == b'X' {
                     result += is_mas(input[x + 1][y], input[x + 2][y], input[x + 3][y]);
                     result += is_mas(
                         input[x + 1][y + 1],
@@ -50,7 +50,7 @@ impl AdventOfCodeDay for Solver {
         let mut result = 0;
         for x in 3..column_width {
             for y in 3..row_width {
-                if input[x][y] == 3 {
+                if input[x][y] == b'A' {
                     let mut left = is_mas(input[x - 1][y - 1], input[x][y], input[x + 1][y + 1]);
                     left += is_mas(input[x + 1][y + 1], input[x][y], input[x - 1][y - 1]);
                     if left == 1 {
@@ -72,28 +72,21 @@ impl AdventOfCodeDay for Solver {
     }
 }
 
-fn is_mas(m: u32, a: u32, s: u32) -> u32 {
-    if m == 2 && a == 3 && s == 4 {
+fn is_mas(m: u8, a: u8, s: u8) -> u32 {
+    if m == b'M' && a == b'A' && s == b'S' {
         1
     } else {
         0
     }
 }
 
-fn parse_row(line: &str, width: usize) -> Vec<u32> {
+fn parse_row(line: &str, width: usize) -> Vec<u8> {
     let mut result = Vec::with_capacity(width);
     result.push(0);
     result.push(0);
     result.push(0);
-    for char in line.chars() {
-        let marker = match char {
-            'X' => 1,
-            'M' => 2,
-            'A' => 3,
-            'S' => 4,
-            _ => 0,
-        };
-        result.push(marker);
+    for char in line.bytes() {
+        result.push(char);
     }
     result.push(0);
     result.push(0);
@@ -101,7 +94,7 @@ fn parse_row(line: &str, width: usize) -> Vec<u32> {
     result
 }
 
-fn parse_input(input: &str) -> Vec<Vec<u32>> {
+fn parse_input(input: &str) -> Vec<Vec<u8>> {
     let mut lines = input.lines();
     let first_line = lines.next().unwrap();
     let width = first_line.len();
