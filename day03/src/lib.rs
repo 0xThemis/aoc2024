@@ -40,14 +40,12 @@ fn solve_puzzle1(input: &str) -> i64 {
 }
 
 fn solve_puzzle2(hay: &str) -> i64 {
-    println!("{hay}");
     let mul = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
     let mut opcodes = VecDeque::with_capacity(1024);
     mul.captures_iter(hay).for_each(|needle| {
-        let (a, [lhs, rhs]) = needle.extract();
-        let index = hay.find(a).unwrap();
+        let (_, [lhs, rhs]) = needle.extract();
         opcodes.push_back(Mul {
-            index,
+            index: needle.get(0).unwrap().start(),
             lhs: lhs.parse().unwrap(),
             rhs: rhs.parse().unwrap(),
         });
@@ -68,7 +66,6 @@ fn solve_puzzle2(hay: &str) -> i64 {
                 if opcode.index == index {
                     let opcode = opcodes.pop_front().unwrap();
                     if is_enabled {
-                        println!("enabled opcode");
                         result += opcode.lhs * opcode.rhs;
                     }
                 }
