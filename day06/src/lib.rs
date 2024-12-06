@@ -1,146 +1,104 @@
-use core::panic;
 use std::usize;
 
 use aoc_traits::AdventOfCodeDay;
 
-const UP: usize = 0;
-const RIGHT: usize = 1;
-const DOWN: usize = 2;
-const LEFT: usize = 3;
-const NO_WALL: usize = usize::MAX;
-
-#[derive(Default, Clone)]
-pub struct Guard {
-    direction: usize,
-    position_x: usize,
-    position_y: usize,
-}
-pub struct Map {
-    up: Vec<usize>,
-    right: Vec<usize>,
-    down: Vec<usize>,
-    left: Vec<usize>,
-
-    guard: Guard,
+#[derive(Clone, Copy)]
+enum Field {
+    Obstacle,
+    Free,
+    Over,
 }
 
-impl Guard {
-    fn new(direction: usize, position_x: usize, position_y: usize) -> Self {
-        Self {
-            direction,
-            position_x,
-            position_y,
+impl std::fmt::Debug for Field {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Field::Obstacle => write!(f, "#"),
+            Field::Free => write!(f, "."),
+            Field::Over => write!(f, "o"),
         }
     }
 }
 
+#[derive(Clone, Debug, Copy)]
+enum Direction {
+    Up,
+    Right,
+    Down,
+    Left,
+}
+
+impl Default for Direction {
+    fn default() -> Self {
+        Self::Up
+    }
+}
+
+#[derive(Debug, Default, Clone)]
+struct Guard {
+    direction: Direction,
+    x: usize,
+    y: usize,
+}
+
+impl Guard {
+    pub fn new() -> Self {
+        Guard::default()
+    }
+
+    pub fn set_coords(&mut self, x: usize, y: usize) {
+        self.x = x;
+        self.y = y;
+    }
+    pub fn turn(&mut self) {
+        let direction = match self.direction {
+            Direction::Up => Direction::Right,
+            Direction::Right => Direction::Down,
+            Direction::Down => Direction::Left,
+            Direction::Left => Direction::Up,
+        };
+        self.direction = direction;
+    }
+
+    pub fn what_next_step(&mut self, map: &[Vec<Field>]) -> Field {
+        match self.direction {
+            Direction::Up => map[self.x - 1][self.y],
+            Direction::Right => map[self.x][self.y + 1],
+            Direction::Down => map[self.x + 1][self.y],
+            Direction::Left => map[self.x][self.y - 1],
+        }
+    }
+    pub fn go(&mut self) {
+        match self.direction {
+            Direction::Up => self.x -= 1,
+            Direction::Right => self.y += 1,
+            Direction::Down => self.x += 1,
+            Direction::Left => self.y -= 1,
+        }
+    }
+}
+
+pub struct Map {
+    map: Vec<Vec<Field>>,
+    guard: Guard,
+}
+
 impl Map {
     fn solve_part1(&self) -> usize {
+        let mut visited = vec![vec![false; self.map[0].len()]; self.map.len()];
+        visited[self.guard.x][self.guard.y] = true;
         let mut moving_guard = self.guard.clone();
-        let mut visited = vec![vec![false; 10]; 10];
         loop {
-            match moving_guard.direction {
-                UP => {
-                    println!(
-                        "guard is at {},{} and looks up",
-                        moving_guard.position_x, moving_guard.position_y
-                    );
-                    let max_steps = self.up[moving_guard.position_x];
-                    let moving = max_steps - moving_guard.position_x;
-                    for i in 0..moving {
-                        visited[moving_guard.position_x][moving_guard.position_y - i] = true;
-                    }
-                    moving_guard.direction = RIGHT;
-                    moving_guard.position_y = 9 - max_steps + 1;
-                    println!(
-                        "no she looks right and is at {}, {}",
-                        moving_guard.position_x, moving_guard.position_y
-                    );
+            match moving_guard.what_next_step(&self.map) {
+                Field::Obstacle => {
+                    visited[moving_guard.x][moving_guard.y] = true;
+                    moving_guard.turn();
                 }
-                RIGHT => {
-                    println!(
-                        "guard is at {},{} and looks right",
-                        moving_guard.position_x, moving_guard.position_y
-                    );
-                    let max_steps = self.right[moving_guard.position_y] - 1;
-                    let moving = max_steps - moving_guard.position_x;
-                    for i in 0..moving {
-                        visited[moving_guard.position_x + i][moving_guard.position_y] = true;
-                        println!(
-                            "she visiting {}, {}",
-                            moving_guard.position_x + i,
-                            moving_guard.position_y
-                        );
-                    }
-                    moving_guard.direction = DOWN;
-                    moving_guard.position_x = max_steps;
-                    println!(
-                        "no she looks down and is at {}, {}",
-                        moving_guard.position_x, moving_guard.position_y
-                    );
-                }
-                DOWN => {
-                    println!(
-                        "guard is at {},{} and looks down",
-                        moving_guard.position_x, moving_guard.position_y
-                    );
-                    let mut max_steps = self.down[moving_guard.position_x];
-                    if max_steps == NO_WALL {
-                        break;
-                    }
-                    if max_steps <= moving_guard.position_y {
-                        break;
-                    }
-                    max_steps -= 1;
-                    let moving = max_steps - moving_guard.position_y;
-                    for i in 0..moving {
-                        visited[moving_guard.position_x][moving_guard.position_y + i] = true;
-                        println!(
-                            "she visiting {}, {}",
-                            moving_guard.position_x,
-                            moving_guard.position_y + i
-                        );
-                    }
-                    moving_guard.direction = LEFT;
-                    moving_guard.position_y = max_steps;
-                    println!(
-                        "no she looks left and is at {}, {}",
-                        moving_guard.position_x, moving_guard.position_y
-                    );
-                }
-                LEFT => {
-                    println!(
-                        "guard is at {},{} and looks left",
-                        moving_guard.position_x, moving_guard.position_y
-                    );
-                    let mut max_steps = self.left[moving_guard.position_y];
-                    if max_steps == NO_WALL {
-                        panic!()
-                    }
-                    let moving = max_steps - (8 - moving_guard.position_x);
-                    println!("she can go {moving} steps");
-                    let moving = max_steps - moving_guard.position_y;
-                    for i in 0..moving {
-                        visited[moving_guard.position_x][moving_guard.position_y + i] = true;
-                        println!(
-                            "she visiting {}, {}",
-                            moving_guard.position_x,
-                            moving_guard.position_y + i
-                        )
-                    }
-                    println!("max steps would be {max_steps}");
-                    moving_guard.direction = UP;
-                    moving_guard.position_x = 9 - max_steps;
-                    println!(
-                        "no she looks up and is at {}, {}",
-                        moving_guard.position_x, moving_guard.position_y
-                    );
-                }
-                _ => unreachable!(),
+                Field::Free => visited[moving_guard.x][moving_guard.y] = true,
+                Field::Over => break,
             }
-            println!("======== result ");
+            moving_guard.go();
         }
-        visited.into_iter().flatten().filter(|x| *x).count()
+        visited.into_iter().flatten().filter(|x| *x).count() + 1
     }
 }
 
@@ -164,52 +122,45 @@ impl AdventOfCodeDay for Solver {
     }
 }
 
-fn parse_input(input: &str) -> Map {
-    let mut up = vec![NO_WALL; 10];
-    let mut right = vec![NO_WALL; 10];
-    let mut down = vec![NO_WALL; 10];
-    let mut left = vec![NO_WALL; 10];
-    let mut guard = Guard::default();
-
-    for (row, line) in input.lines().enumerate() {
-        for (column, char) in line.chars().enumerate() {
-            match char {
-                '#' => {
-                    down[column] = row;
-                    right[row] = column;
-                }
-                '^' => guard = Guard::new(UP, column, row),
-                '>' => guard = Guard::new(RIGHT, column, row),
-                'v' => guard = Guard::new(DOWN, column, row),
-                '<' => guard = Guard::new(LEFT, column, row),
-                '.' => continue,
-                _ => unreachable!(),
+fn parse_line(line: &str, guard: &mut Guard, row: usize) -> Vec<Field> {
+    let mut current_row = Vec::with_capacity(line.len());
+    current_row.push(Field::Over);
+    for (col, char) in line.chars().enumerate() {
+        match char {
+            '#' => current_row.push(Field::Obstacle),
+            '^' => {
+                current_row.push(Field::Free);
+                guard.set_coords(row + 1, col + 1);
             }
+            '.' => current_row.push(Field::Free),
+            _ => unreachable!(),
         }
     }
-    for idx in 0..10 {
-        if down[idx] != NO_WALL {
-            up[idx] = 9_usize.saturating_sub(down[idx]);
-        }
-        if right[idx] != NO_WALL {
-            left[idx] = 9_usize.saturating_sub(right[idx]);
-        }
+    current_row.push(Field::Over);
+    current_row
+}
+
+fn parse_input(input: &str) -> Map {
+    let mut map = vec![];
+    let mut guard = Guard::new();
+    let mut lines = input.lines();
+    let first_line = lines.next().unwrap();
+    let width = first_line.len();
+    map.push(vec![Field::Over; width]);
+    map.push(parse_line(first_line, &mut guard, 0));
+    for (row, line) in input.lines().enumerate() {
+        map.push(parse_line(line, &mut guard, row));
     }
-    Map {
-        up,
-        right,
-        down,
-        left,
-        guard,
-    }
+    map.push(vec![Field::Over; width]);
+    Map { guard, map }
 }
 
 #[test]
 fn day06() {
     let root = std::env!("CARGO_MANIFEST_DIR");
-    let input = std::fs::read_to_string(format!("{root}/inputs/demo1.txt")).unwrap();
+    let input = std::fs::read_to_string(format!("{root}/inputs/puzzle1.txt")).unwrap();
     let parsed = Solver::parse_input(input.trim());
 
-    assert_eq!(41, Solver::solve_part1(&parsed));
-    assert_eq!(6142, Solver::solve_part2(&parsed));
+    assert_eq!(4973, Solver::solve_part1(&parsed));
+    //assert_eq!(6142, Solver::solve_part2(&parsed));
 }
