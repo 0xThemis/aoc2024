@@ -90,5 +90,5 @@ fn day07() {
     let parsed = Solver::parse_input(input.trim());
 
     assert_eq!(42283209483350, Solver::solve_part1(&parsed));
-    assert_eq!(11387, Solver::solve_part2(&parsed));
+    assert_eq!(1026766857276279, Solver::solve_part2(&parsed));
 }

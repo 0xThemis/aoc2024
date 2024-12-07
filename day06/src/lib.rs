@@ -1,5 +1,3 @@
-use std::usize;
-
 use aoc_traits::AdventOfCodeDay;
 
 #[derive(Clone, Copy)]
@@ -65,7 +63,6 @@ impl Map {
         let mut first_path = self.path.clone().into_iter();
         // not allowed on first
         first_path.next().unwrap();
-        first_path.next_back().unwrap();
 
         let mut counter = 0;
         let mut already_taken = vec![vec![false; map[0].len()]; map.len()];
