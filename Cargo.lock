@@ -445,6 +445,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "day07"
+version = "0.1.0"
+dependencies = [
+ "aoc-traits",
+ "intmap",
+]
+
+[[package]]
 name = "digest"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -850,6 +858,7 @@ dependencies = [
  "day04",
  "day05",
  "day06",
+ "day07",
  "secrecy",
 ]
 
