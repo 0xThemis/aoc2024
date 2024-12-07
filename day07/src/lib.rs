@@ -8,11 +8,11 @@ impl AdventOfCodeDay for Solver {
     type Part2Output = u64;
 
     fn solve_part1(input: &Self::ParsedInput<'_>) -> Self::Part1Output {
-        input.lines().map(solve_equation).sum()
+        input.lines().map(solve_add_mul_equation).sum()
     }
 
     fn solve_part2(input: &Self::ParsedInput<'_>) -> Self::Part2Output {
-        input.lines().map(testitest).sum()
+        input.lines().map(solve_concat_equation).sum()
     }
 
     fn parse_input(input: &str) -> Self::ParsedInput<'_> {
@@ -20,7 +20,7 @@ impl AdventOfCodeDay for Solver {
     }
 }
 
-fn testitest(equation: &str) -> u64 {
+fn solve_concat_equation(equation: &str) -> u64 {
     let mut split = equation.split(':');
     let equation_result = split.next().unwrap().parse().unwrap();
     let mut current_level = Vec::with_capacity(3_usize << 14);
@@ -54,7 +54,7 @@ fn concat(a: u64, b: u64) -> u64 {
     a * 10u64.pow(b.ilog10() + 1) + b
 }
 
-fn solve_equation(equation: &str) -> u64 {
+fn solve_add_mul_equation(equation: &str) -> u64 {
     let mut split = equation.split(':');
     let equation_result = split.next().unwrap().parse().unwrap();
     let mut current_level = Vec::with_capacity(2_usize << 14);
