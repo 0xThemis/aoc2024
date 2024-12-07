@@ -41,9 +41,16 @@ fn solve_concat_equation(equation: &str) -> u64 {
             if add == equation_result || mul == equation_result || concat == equation_result {
                 return equation_result;
             }
-            next_level.push(add);
-            next_level.push(mul);
-            next_level.push(concat);
+            // this is large enough that it is beneficial
+            if add < equation_result {
+                next_level.push(add);
+            }
+            if mul < equation_result {
+                next_level.push(mul);
+            }
+            if concat < equation_result {
+                next_level.push(concat);
+            }
         }
         std::mem::swap(&mut current_level, &mut next_level);
         next_level.clear();
