@@ -32,28 +32,36 @@ fn solve_concat_equation(equation: &str) -> u64 {
         .map(|x| x.parse::<u64>().unwrap());
     //first level
     let init = numbers.next().unwrap();
+    // get the last level
+    let final_number = numbers.next_back().unwrap();
     current_level.push(init);
     for next_number in numbers {
         for last_number in current_level.iter() {
             let add = last_number + next_number;
             let mul = last_number * next_number;
             let concat = concat(*last_number, next_number);
-            if add == equation_result || mul == equation_result || concat == equation_result {
-                return equation_result;
-            }
             // this is large enough that it is beneficial
-            if add < equation_result {
+            if add <= equation_result {
                 next_level.push(add);
             }
-            if mul < equation_result {
+            if mul <= equation_result {
                 next_level.push(mul);
             }
-            if concat < equation_result {
+            if concat <= equation_result {
                 next_level.push(concat);
             }
         }
         std::mem::swap(&mut current_level, &mut next_level);
         next_level.clear();
+    }
+    // do the last level
+    for last_number in current_level.iter() {
+        let add = last_number + final_number;
+        let mul = last_number * final_number;
+        let concat = concat(*last_number, final_number);
+        if add == equation_result || mul == equation_result || concat == equation_result {
+            return equation_result;
+        }
     }
     0
 }
@@ -71,21 +79,28 @@ fn solve_add_mul_equation(equation: &str) -> u64 {
         .unwrap()
         .split_ascii_whitespace()
         .map(|x| x.parse::<u64>().unwrap());
-    //first level
+    // first level
     let init = numbers.next().unwrap();
+    // get the last level
+    let final_number = numbers.next_back().unwrap();
     current_level.push(init);
-    for nnext_umber in numbers {
+    for next_number in numbers {
         for last_number in current_level.iter() {
-            let add = last_number + nnext_umber;
-            let mul = last_number * nnext_umber;
-            if add == equation_result || mul == equation_result {
-                return equation_result;
-            }
+            let add = last_number + next_number;
+            let mul = last_number * next_number;
             next_level.push(add);
             next_level.push(mul);
         }
         std::mem::swap(&mut current_level, &mut next_level);
         next_level.clear();
+    }
+    // do the last level
+    for last_number in current_level.iter() {
+        let add = last_number + final_number;
+        let mul = last_number * final_number;
+        if add == equation_result || mul == equation_result {
+            return equation_result;
+        }
     }
     0
 }
