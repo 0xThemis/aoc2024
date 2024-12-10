@@ -6,9 +6,7 @@ pub enum DiskSpace {
     Free(usize),
 }
 
-pub type Disk = Vec<DiskSpace>;
-
-pub struct Disk1 {
+pub struct Disk {
     part1: Vec<DiskSpace>,
     part2: Vec<DiskSpace>,
 }
@@ -16,7 +14,7 @@ pub struct Disk1 {
 #[derive(Default)]
 pub struct Solver;
 impl AdventOfCodeDay for Solver {
-    type ParsedInput<'a> = Disk1;
+    type ParsedInput<'a> = Disk;
     type Part1Output = usize;
     type Part2Output = usize;
 
@@ -33,7 +31,7 @@ impl AdventOfCodeDay for Solver {
     }
 }
 
-fn solve_part2(disk: &Disk1) -> usize {
+fn solve_part2(disk: &Disk) -> usize {
     let mut for_expansion = disk.part2.clone();
     loop {
         if !move_around(&mut for_expansion) {
@@ -58,7 +56,7 @@ fn solve_part2(disk: &Disk1) -> usize {
         .sum()
 }
 
-fn move_around(disk: &mut Disk) -> bool {
+fn move_around(disk: &mut Vec<DiskSpace>) -> bool {
     let cloned = disk.clone();
     for (rev_idx, space) in cloned.iter().enumerate().rev() {
         match space {
@@ -88,7 +86,7 @@ fn move_around(disk: &mut Disk) -> bool {
     false
 }
 
-fn solve_part1(disk: &Disk1) -> usize {
+fn solve_part1(disk: &Disk) -> usize {
     let mut disk = disk.part1.clone();
     let mut rev = disk.len();
     let mut free_space = 0;
@@ -130,9 +128,9 @@ fn solve_part1(disk: &Disk1) -> usize {
         .sum()
 }
 
-fn parse_input(input: &str) -> Disk1 {
-    let mut disk1 = Disk::with_capacity(65536);
-    let mut disk2 = Disk::with_capacity(65536);
+fn parse_input(input: &str) -> Disk {
+    let mut disk1 = Vec::with_capacity(65536);
+    let mut disk2 = Vec::with_capacity(65536);
     let mut is_file = true;
     let mut file_id = 0;
     for char in input.chars() {
@@ -148,14 +146,14 @@ fn parse_input(input: &str) -> Disk1 {
         disk2.push(to_push);
         is_file = !is_file;
     }
-    Disk1 {
+    Disk {
         part1: disk1,
         part2: disk2,
     }
 }
 
 #[test]
-fn day08() {
+fn day09() {
     let root = std::env!("CARGO_MANIFEST_DIR");
     let input = std::fs::read_to_string(format!("{root}/inputs/puzzle1.txt")).unwrap();
     let parsed = Solver::parse_input(input.trim());
