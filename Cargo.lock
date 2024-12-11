@@ -433,7 +433,7 @@ name = "day05"
 version = "0.1.0"
 dependencies = [
  "aoc-traits",
- "intmap",
+ "intmap 2.0.0",
 ]
 
 [[package]]
@@ -441,7 +441,7 @@ name = "day06"
 version = "0.1.0"
 dependencies = [
  "aoc-traits",
- "intmap",
+ "intmap 2.0.0",
 ]
 
 [[package]]
@@ -449,7 +449,7 @@ name = "day07"
 version = "0.1.0"
 dependencies = [
  "aoc-traits",
- "intmap",
+ "intmap 2.0.0",
 ]
 
 [[package]]
@@ -457,7 +457,7 @@ name = "day08"
 version = "0.1.0"
 dependencies = [
  "aoc-traits",
- "intmap",
+ "intmap 2.0.0",
 ]
 
 [[package]]
@@ -472,6 +472,14 @@ name = "day10"
 version = "0.1.0"
 dependencies = [
  "aoc-traits",
+]
+
+[[package]]
+name = "day11"
+version = "0.1.0"
+dependencies = [
+ "aoc-traits",
+ "intmap 3.0.0",
 ]
 
 [[package]]
@@ -819,6 +827,12 @@ name = "intmap"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ee87fd093563344074bacf24faa0bb0227fb6969fb223e922db798516de924d6"
+
+[[package]]
+name = "intmap"
+version = "3.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d5060f612722cfc63eb553c33984067081a56f3053bf41ed1fdb6defa37986a7"
 
 [[package]]
 name = "io_tee"
