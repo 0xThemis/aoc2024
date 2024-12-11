@@ -82,9 +82,9 @@ fn solve_part2(stones: &Stones) -> usize {
 }
 
 fn blink25(stone: Stone) -> Vec<Stone> {
-    let mut next_stones = Stones::with_capacity(2_usize.pow(32));
+    let mut next_stones = Stones::with_capacity(20000);
     let mut current_stones = vec![stone];
-    next_stones.reserve(2_usize.pow(32));
+    next_stones.reserve(20000);
     for _ in 0..25 {
         for stone in std::mem::take(&mut current_stones) {
             if stone == 0 {
