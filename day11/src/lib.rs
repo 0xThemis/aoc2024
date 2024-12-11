@@ -44,26 +44,26 @@ fn solve_part2(stones: &Stones) -> usize {
         .flatten()
         .collect::<Vec<_>>();
     // remove duplicates
-    let mut duplicates = IntMap::new();
+    let mut uniques = IntMap::new();
     lvl25.iter().for_each(|stone| {
-        duplicates.insert(*stone, ());
+        uniques.insert(*stone, ());
     });
 
-    let lvl50 = duplicates
+    let lvl50 = uniques
         .keys()
         .into_iter()
         .map(|stone| (stone, blink25(stone)))
         .collect::<Vec<_>>();
-    let mut duplicates = IntMap::new();
+    let mut uniques = IntMap::new();
 
     lvl50.iter().for_each(|(_, vec)| {
         vec.iter().for_each(|stone| {
-            duplicates.insert(*stone, ());
+            uniques.insert(*stone, ());
         })
     });
 
     let mut already_computed = IntMap::new();
-    duplicates.keys().into_iter().for_each(|stone| {
+    uniques.keys().into_iter().for_each(|stone| {
         already_computed.insert(stone, blink25(stone).len());
     });
 
@@ -120,12 +120,5 @@ fn day11() {
     let input = std::fs::read_to_string(format!("{root}/inputs/puzzle1.txt")).unwrap();
     let parsed = Solver::parse_input(input.trim());
     assert_eq!(183248, Solver::solve_part1(&parsed));
-    let time = std::time::Instant::now();
     assert_eq!(218811774248729, Solver::solve_part2(&parsed));
-    let elapsed = time.elapsed();
-    println!(
-        "took {}.{} seconds",
-        elapsed.as_secs(),
-        elapsed.subsec_millis()
-    );
 }
